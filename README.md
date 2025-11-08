@@ -1,2 +1,2 @@
 # Team-Code-X-Contact-pg
-This is Official yeam code x contact page
+This is Official team code x contact page

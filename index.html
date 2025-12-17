@@ -1,385 +1,1110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Team Code-X | Dominate. Innovate. Repeat.</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <style>
-    :root {
-      --cyan: #00ffff;
-      --pink: #ff00ff;
-      --gold: #ffd700;
-      --dark: #0a0a1a;
-      --glass: rgba(20, 20, 60, 0.6);
-      --text: #e0f7fa;
-      --muted: #88b7c0;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--dark);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-      padding: 20px;
-      transition: 0.5s;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 20px; right: 20px;
-      background: var(--cyan);
-      color: #000;
-      padding: 14px 24px;
-      border-radius: 12px;
-      font-weight: bold;
-      z-index: 10000;
-      transform: translateX(120%);
-      transition: transform 0.4s ease;
-      box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
-      font-size: 0.95rem;
-    }
-    .toast.show { transform: translateX(0); }
-
-    .bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-
-    .theme-toggle {
-      position: fixed; top: 25px; right: 25px; z-index: 1000;
-      background: rgba(0,0,0,0.6); width: 60px; height: 60px;
-      border-radius: 50%; display: flex; align-items: center;
-      justify-content: center; cursor: pointer;
-      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
-      transition: 0.4s; backdrop-filter: blur(10px);
-    }
-    .theme-toggle:hover { transform: scale(1.1); box-shadow: 0 0 35px var(--cyan); }
-    .theme-toggle i { font-size: 1.7rem; color: var(--gold); }
-
-    .container {
-      max-width: 1100px; margin: 40px auto; padding: 50px;
-      background: var(--glass); backdrop-filter: blur(22px);
-      border-radius: 32px; border: 2px solid rgba(0, 255, 255, 0.3);
-      box-shadow: 0 0 70px rgba(0, 255, 255, 0.25); z-index: 1;
-    }
-
-    h1 {
-      text-align: center; font-family: 'Orbitron', sans-serif;
-      font-size: 4.2rem; background: linear-gradient(90deg, var(--cyan), var(--pink), var(--cyan));
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-      text-shadow: 0 0 40px rgba(0, 255, 255, 0.7); margin-bottom: 20px;
-      animation: glow 2s infinite alternate; letter-spacing: 2px;
-    }
-    @keyframes glow { from { text-shadow: 0 0 30px rgba(0,255,255,0.6); } to { text-shadow: 0 0 50px rgba(0,255,255,1); } }
-
-    .quote {
-      text-align: center; font-family: 'Orbitron', sans-serif;
-      font-size: 2rem; color: var(--cyan); margin: 40px 0; height: 60px; overflow: hidden;
-    }
-    .quote span { display: inline-block; border-right: 4px solid var(--cyan); animation: blink 0.7s infinite; }
-    @keyframes blink { 0%, 100% { border-color: transparent; } 50% { border-color: var(--cyan); } }
-
-    .team-grid { display: grid; gap: 30px; margin-top: 40px; }
-
-    .member-card { perspective: 1200px; }
-    .card-inner {
-      background: rgba(30, 30, 80, 0.5); border-radius: 25px; padding: 28px;
-      display: flex; align-items: center; gap: 22px;
-      border: 1.5px solid rgba(0, 255, 255, 0.3); transition: 0.5s;
-      position: relative; overflow: hidden; transform-style: preserve-3d;
-    }
-    .member-card:hover .card-inner {
-      transform: translateY(-15px) rotateX(5deg);
-      box-shadow: 0 35px 70px rgba(0, 255, 255, 0.35); border-color: var(--cyan);
-    }
-
-    /* ✅ Fix: allow LinkedIn clicks */
-    .shine {
-      position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: 0.8s;
-      pointer-events: none; /* important fix */
-      z-index: 1;
-    }
-    .member-card:hover .shine { left: 100%; }
-
-    .avatar {
-      width: 80px; height: 80px; background: linear-gradient(135deg, var(--cyan), var(--pink));
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-weight: bold; font-size: 1.7rem; color: #000; box-shadow: 0 0 25px var(--cyan);
-      position: relative; overflow: hidden;
-    }
-    .avatar::after {
-      content: ''; position: absolute; width: 100%; height: 100%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent);
-      animation: rotate 5s linear infinite;
-    }
-    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-    .info { flex: 1; }
-    .name-line { display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: nowrap; }
-    .name { font-size: 1.4rem; font-weight: 700; color: var(--text); }
-    .phone {
-      font-family: 'Courier New', monospace; background: rgba(0, 255, 255, 0.15);
-      color: var(--cyan); padding: 8px 16px; border-radius: 12px;
-      border: 1px dashed var(--cyan); font-weight: bold; font-size: 0.95rem;
-      cursor: pointer; transition: 0.3s; user-select: none;
-    }
-    .phone:hover { background: rgba(0, 255, 255, 0.25); transform: scale(1.05); }
-
-    .role { font-size: 1rem; color: var(--muted); margin: 8px 0; font-weight: 500; }
-    .leader .role { color: var(--gold); font-weight: 700; text-shadow: 0 0 10px var(--gold); }
-
-    .linkedin-btn {
-      width: 52px; height: 52px; background: #0A66C2; color: white;
-      border-radius: 16px; display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem; box-shadow: 0 0 20px rgba(10, 102, 194, 0.5);
-      transition: 0.4s; text-decoration: none;
-      position: relative;
-      z-index: 5; /* ensure above shine */
-    }
-    .linkedin-btn:hover {
-      background: var(--cyan); color: #000; transform: scale(1.2) rotate(5deg);
-      box-shadow: 0 0 35px var(--cyan);
-    }
-
-    .notes {
-      margin-top: 12px; padding: 8px 18px; border-radius: 30px;
-      font-weight: bold; text-transform: uppercase; font-size: 0.8rem;
-      background: linear-gradient(90deg, #ff4500, #ffd700); color: #000;
-      display: inline-block; cursor: pointer; transition: 0.3s;
-    }
-    .notes:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
-
-    .ex { opacity: 0.4; filter: grayscale(1); }
-    .ex * { text-decoration: line-through; color: #666 !important; }
-
-    footer {
-      text-align: center; margin-top: 60px; color: var(--muted); font-size: 1rem;
-    }
-    footer i { color: #ff00ff; animation: heartbeat 1.5s infinite; }
-    @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.5); } }
-
-    @keyframes fall { to { transform: translateY(120vh) rotate(1080deg); opacity: 0; } }
-
-    @media (max-width: 700px) {
-      h1 { font-size: 2.8rem; } .quote { font-size: 1.5rem; }
-      .container { padding: 30px 20px; }
-      .card-inner { flex-direction: column; text-align: center; padding: 22px; }
-      .name-line { flex-direction: column; gap: 10px; }
-      .avatar { margin-bottom: 12px; }
-      .linkedin-btn, .notes { margin: 10px auto; }
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Team Code-X | Dominate. Innovate. Repeat.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <style>
+        :root {
+            --cyan: #00ffff;
+            --pink: #ff00ff;
+            --gold: #ffd700;
+            --dark: #0a0a1a;
+            --glass: rgba(20, 20, 60, 0.6);
+            --text: #e0f7fa;
+            --muted: #88b7c0;
+            --light-bg: #f8f9ff;
+            --light-text: #1a1a2e;
+            --light-glass: rgba(255, 255, 255, 0.8);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+            transition: all 0.5s ease;
+        }
+        body.light {
+            background: var(--light-bg);
+            color: var(--light-text);
+        }
+        body.light .container {
+            background: var(--light-glass);
+            border-color: rgba(0, 123, 255, 0.3);
+            box-shadow: 0 0 70px rgba(0, 123, 255, 0.15);
+        }
+        body.light .card-inner {
+            background: rgba(248, 249, 255, 0.9);
+            border-color: rgba(0, 123, 255, 0.2);
+        }
+        body.light .name {
+            color: var(--light-text);
+        }
+        body.light .role {
+            color: #6c757d;
+        }
+        body.light .leader .role {
+            color: var(--gold);
+        }
+        body.light .contact-btn {
+            background: #007bff;
+        }
+        body.light .contact-btn:hover {
+            background: var(--cyan);
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--cyan);
+            color: #000;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: bold;
+            z-index: 10000;
+            transform: translateX(120%);
+            transition: transform 0.4s ease;
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+            font-size: 0.95rem;
+            pointer-events: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .toast.show {
+            transform: translateX(0);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+        }
+        .bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.6);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+            transition: 0.4s;
+            backdrop-filter: blur(10px);
+        }
+        body.light .theme-toggle {
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 0 25px rgba(0, 123, 255, 0.4);
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 35px var(--cyan);
+        }
+        .theme-toggle i {
+            font-size: 1.7rem;
+            color: var(--gold);
+        }
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 50px;
+            background: var(--glass);
+            backdrop-filter: blur(22px);
+            border-radius: 32px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 70px rgba(0, 255, 255, 0.25);
+            z-index: 1;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+        h1 {
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4.2rem;
+            background: linear-gradient(90deg, var(--cyan), var(--pink), var(--cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 40px rgba(0, 255, 255, 0.7);
+            margin-bottom: 20px;
+            animation: glow 2s infinite alternate;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 2;
+        }
+        body.light h1 {
+            background: linear-gradient(90deg, #007bff, #6f42c1, #007bff);
+            text-shadow: 0 0 20px rgba(0, 123, 255, 0.5);
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 30px rgba(0,255,255,0.6); }
+            to { text-shadow: 0 0 50px rgba(0,255,255,1); }
+        }
+        .quote {
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--cyan);
+            margin: 40px 0;
+            height: 60px;
+            overflow: hidden;
+            position: relative;
+        }
+        body.light .quote {
+            color: #007bff;
+        }
+        .quote span {
+            display: inline-block;
+            border-right: 4px solid var(--cyan);
+            animation: blink 0.7s infinite;
+        }
+        body.light .quote span {
+            border-right-color: #007bff;
+        }
+        .quote::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            animation: wave 3s ease-in-out infinite;
+        }
+        @keyframes wave {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+        @keyframes blink {
+            0%, 100% { border-color: transparent; }
+            50% { border-color: var(--cyan); }
+        }
+        .team-grid {
+            display: grid;
+            gap: 30px;
+            margin-top: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            align-items: start;
+        }
+        .member-card {
+            perspective: 1200px;
+            transition: transform 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .member-card:hover {
+            transform: scale(1.02);
+        }
+        .card-inner {
+            background: rgba(30, 30, 80, 0.5);
+            border-radius: 25px;
+            padding: 28px;
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            border: 1.5px solid rgba(0, 255, 255, 0.3);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            flex: 1;
+            height: 100%;
+            min-height: 200px;
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.15);
+        }
+        .member-card:not(.leader):hover .card-inner {
+            transform: translateY(-12px) rotateX(4deg);
+            box-shadow: 0 30px 60px rgba(0, 255, 255, 0.3), 0 0 25px rgba(0, 255, 255, 0.15);
+            border-color: var(--cyan);
+            background: rgba(30, 30, 80, 0.7);
+        }
+        .member-card:not(.leader) .avatar {
+            transition: all 0.4s ease;
+            box-shadow: 0 0 20px var(--cyan);
+        }
+        .member-card:not(.leader):hover .avatar {
+            transform: rotate(180deg) scale(1.08);
+            box-shadow: 0 0 40px var(--cyan), inset 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+        .member-card:not(.leader) .name {
+            transition: all 0.3s ease;
+        }
+        .member-card:not(.leader):hover .name {
+            color: var(--cyan);
+            text-shadow: 0 0 12px var(--cyan);
+            font-size: 1.45rem;
+        }
+        .member-card:not(.leader) .role {
+            transition: all 0.3s ease;
+        }
+        .member-card:not(.leader):hover .role {
+            color: var(--cyan);
+            text-shadow: 0 0 8px var(--cyan);
+            font-weight: 600;
+        }
+        .member-card:not(.leader) .contact-btn {
+            transition: all 0.3s ease;
+        }
+        .member-card:not(.leader):hover .contact-btn {
+            background: linear-gradient(135deg, var(--cyan), var(--pink));
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.3);
+        }
+        .leader .card-inner {
+            background: linear-gradient(135deg, rgba(30, 30, 80, 0.7), rgba(255, 215, 0, 0.1));
+            border: 2px solid var(--gold);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4), 0 0 40px rgba(0, 255, 255, 0.2);
+            position: relative;
+            animation: leaderPulse 3s infinite ease-in-out;
+            padding-top: 50px; /* Increased space for higher crown */
+        }
+        @keyframes leaderPulse {
+            0%, 100% { 
+                box-shadow: 0 0 30px rgba(255, 215, 0, 0.4), 0 0 40px rgba(0, 255, 255, 0.2), inset 0 0 20px rgba(255, 215, 0, 0.1);
+            }
+            50% { 
+                box-shadow: 0 0 60px rgba(255, 215, 0, 0.7), 0 0 50px rgba(0, 255, 255, 0.4), inset 0 0 30px rgba(255, 215, 0, 0.2);
+            }
+        }
+        .leader .card-inner::before {
+            content: '👑';
+            position: absolute;
+            top: -15px; /* Moved higher for better visibility of name */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.8rem;
+            z-index: 10;
+            animation: crownFloat 2s ease-in-out infinite, crownGlow 2s infinite alternate;
+            text-shadow: 0 0 15px var(--gold);
+            filter: drop-shadow(0 0 10px var(--gold));
+        }
+        @keyframes crownFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-8px); }
+        }
+        @keyframes crownGlow {
+            from { text-shadow: 0 0 15px var(--gold); }
+            to { text-shadow: 0 0 25px var(--gold), 0 0 35px var(--cyan); }
+        }
+        .leader .card-inner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 20%, rgba(255, 215, 0, 0.1), transparent 70%);
+            opacity: 0.5;
+            z-index: 0;
+            animation: radialPulse 4s ease-in-out infinite;
+        }
+        @keyframes radialPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        .leader .avatar {
+            background: linear-gradient(135deg, var(--gold), var(--cyan));
+            box-shadow: 0 0 30px var(--gold), inset 0 0 20px rgba(255, 255, 255, 0.2);
+            animation: leaderGlow 2s infinite alternate;
+            border: 3px solid var(--gold);
+            position: relative;
+            z-index: 2;
+        }
+        .leader .avatar::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--cyan), var(--pink), var(--cyan));
+            border-radius: 50%;
+            z-index: -1;
+            animation: borderRotate 4s linear infinite;
+        }
+        @keyframes borderRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes leaderGlow {
+            from { box-shadow: 0 0 30px var(--gold), inset 0 0 20px rgba(255, 255, 255, 0.2); }
+            to { box-shadow: 0 0 50px var(--gold), 0 0 25px var(--cyan), inset 0 0 30px rgba(255, 255, 255, 0.3); }
+        }
+        .leader .name {
+            color: var(--gold);
+            text-shadow: 0 0 15px var(--gold);
+            font-size: 1.7rem;
+            z-index: 2;
+            position: relative;
+            animation: nameFloat 3s ease-in-out infinite;
+        }
+        @keyframes nameFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        .leader .role {
+            color: var(--gold);
+            font-weight: 700;
+            text-shadow: 0 0 10px var(--gold);
+            font-size: 1.1rem;
+            animation: rolePulse 2s infinite;
+            z-index: 2;
+            position: relative;
+        }
+        @keyframes rolePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; text-shadow: 0 0 20px var(--gold); }
+        }
+        .leader .shine {
+            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.4), transparent);
+        }
+        .leader .contact-btn {
+            background: linear-gradient(135deg, var(--gold), var(--cyan));
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        .leader .contact-btn:hover {
+            background: linear-gradient(135deg, var(--cyan), var(--gold));
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+        }
+        .shine {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.8s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .member-card:hover .shine {
+            left: 100%;
+        }
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--cyan), var(--pink));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.7rem;
+            color: #000;
+            box-shadow: 0 0 25px var(--cyan);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+        .member-card:hover .avatar {
+            transform: rotate(360deg);
+        }
+        .avatar::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent);
+            animation: rotate 5s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+        }
+        .name-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: nowrap;
+        }
+        .name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text);
+            transition: color 0.3s;
+        }
+        .role {
+            font-size: 1rem;
+            color: var(--muted);
+            margin: 8px 0;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .leader .role {
+            color: var(--gold);
+            font-weight: 700;
+            text-shadow: 0 0 10px var(--gold);
+        }
+        .linkedin-btn {
+            width: 52px;
+            height: 52px;
+            background: #0A66C2;
+            color: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 0 20px rgba(10, 102, 194, 0.5);
+            transition: all 0.4s ease;
+            text-decoration: none;
+            position: relative;
+            z-index: 5;
+            flex-shrink: 0;
+        }
+        .linkedin-btn:hover {
+            background: var(--cyan);
+            color: #000;
+            transform: scale(1.2) rotate(5deg);
+            box-shadow: 0 0 35px var(--cyan);
+        }
+        .contact-btn {
+            background: var(--pink);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(255, 0, 255, 0.3);
+            width: 100%;
+        }
+        .contact-btn:hover:not(:disabled) {
+            background: var(--cyan);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+        }
+        .contact-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .notes {
+            margin-top: 12px;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            background: linear-gradient(90deg, #ff4500, #ffd700);
+            color: #000;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .notes:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+        .ex {
+            opacity: 0.6;
+            filter: grayscale(0.5);
+            transition: opacity 0.3s;
+        }
+        .ex * {
+            text-decoration: line-through;
+            color: #888 !important;
+        }
+        .ex:hover {
+            opacity: 0.8;
+        }
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--muted);
+            font-size: 1rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 2;
+        }
+        body.light footer {
+            color: #6c757d;
+            border-top-color: rgba(0,0,0,0.1);
+        }
+        footer i {
+            color: #ff00ff;
+            animation: heartbeat 1.5s infinite;
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+        }
+        @keyframes fall {
+            to { transform: translateY(120vh) rotate(1080deg); opacity: 0; }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-content {
+            background: var(--glass);
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid var(--cyan);
+            box-shadow: 0 0 50px rgba(0,255,255,0.3);
+            animation: slideIn 0.3s ease;
+            position: relative;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        body.light .modal-content {
+            background: rgba(255,255,255,0.95);
+            border-color: #007bff;
+        }
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            color: var(--text);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        body.light .close {
+            color: var(--light-text);
+        }
+        .close:hover {
+            color: var(--cyan);
+        }
+        .modal h3 {
+            color: var(--cyan);
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+        }
+        body.light .modal h3 {
+            color: #007bff;
+        }
+        .modal input, .modal textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid rgba(0,255,255,0.3);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        body.light .modal input, body.light .modal textarea {
+            background: rgba(0,0,0,0.05);
+            color: var(--light-text);
+            border-color: #007bff;
+        }
+        .modal button.submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--cyan);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        .modal button.submit-btn:hover {
+            background: var(--pink);
+            transform: scale(1.02);
+        }
+        .approval-note {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            text-align: center;
+            color: var(--text);
+        }
+        body.light .approval-note {
+            background: rgba(0, 255, 0, 0.1);
+            color: var(--light-text);
+        }
+        .contact-details {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid var(--cyan);
+        }
+        body.light .contact-details {
+            background: rgba(0, 0, 0, 0.05);
+            border-left-color: #007bff;
+        }
+        .contact-details h4 {
+            color: var(--gold);
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            margin: 12px 0;
+        }
+        .contact-item span:first-child {
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+        .contact-item span:last-child {
+            font-size: 1.1rem;
+            font-weight: bold;
+            word-break: break-all;
+        }
+        @media (max-width: 700px) {
+            h1 {
+                font-size: 2.8rem;
+            }
+            .quote {
+                font-size: 1.5rem;
+            }
+            .container {
+                padding: 30px 20px;
+                margin: 20px auto;
+            }
+            .card-inner {
+                flex-direction: column;
+                text-align: center;
+                padding: 22px;
+                gap: 15px;
+                min-height: 250px;
+            }
+            .name-line {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .avatar {
+                margin-bottom: 12px;
+            }
+            .linkedin-btn, .notes, .contact-btn {
+                margin: 10px auto;
+                display: block;
+                width: fit-content;
+            }
+            .modal-content {
+                margin: 20% auto;
+                width: 95%;
+                padding: 20px;
+            }
+            .leader .card-inner {
+                padding-top: 60px;
+            }
+            .leader .card-inner::before {
+                top: -10px;
+                font-size: 2.2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-
-  <canvas class="bg-canvas" id="bgCanvas"></canvas>
-
-  <div class="theme-toggle" onclick="toggleTheme()">
-    <i class="fas fa-moon"></i>
-  </div>
-
-  <div class="container">
-    <h1>Team Code-X</h1>
-    <div class="quote"><span id="typewriter"></span></div>
-
-    <div class="team-grid">
-      <!-- Kanika Pandey -->
-      <div class="member-card leader" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)">
-        <div class="card-inner">
-          <div class="shine"></div>
-          <div class="avatar">KP</div>
-          <div class="info">
-            <div class="name-line">
-              <div class="name">Kanika Pandey</div>
-              <span class="phone" onclick="copyPhone(event)">+91 78289 85175</span>
-            </div>
-            <div class="role">Team Leader</div>
-            <a href="https://www.linkedin.com/in/kanika-pandey-5a6163381" target="_blank" rel="noopener noreferrer" class="linkedin-btn">
-              <i class="fab fa-linkedin-in"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Dhananjay Bhadoria -->
-      <div class="member-card" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)">
-        <div class="card-inner">
-          <div class="shine"></div>
-          <div class="avatar">DB</div>
-          <div class="info">
-            <div class="name-line">
-              <div class="name">Dhananjay Bhadoria</div>
-              <span class="phone" onclick="copyPhone(event)">+91 90989 03123</span>
-            </div>
-            <div class="role">Member</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Nivedit Pathak -->
-      <div class="member-card" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)">
-        <div class="card-inner">
-          <div class="shine"></div>
-          <div class="avatar">NP</div>
-          <div class="info">
-            <div class="name-line">
-              <div class="name">Nivedit Pathak</div>
-              <span class="phone" onclick="copyPhone(event)">+91 85272 61363</span>
-            </div>
-            <div class="role">Member</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tanishq Khevariya -->
-      <div class="member-card" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)">
-        <div class="card-inner">
-          <div class="shine"></div>
-          <div class="avatar">TK</div>
-          <div class="info">
-            <div class="name-line">
-              <div class="name">Tanishq Khevariya</div>
-              <span class="phone" onclick="copyPhone(event)">+91 82994 36456</span>
-            </div>
-            <div class="role">Member</div>
-            <a href="https://www.linkedin.com/in/tanishq-khevariya-a11017372" target="_blank" rel="noopener noreferrer" class="linkedin-btn">
-              <i class="fab fa-linkedin-in"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Aditya Das - New Member -->
-      <div class="member-card" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)">
-        <div class="card-inner">
-          <div class="shine"></div>
-          <div class="avatar">AD</div>
-          <div class="info">
-            <div class="name-line">
-              <div class="name">Aditya Das</div>
-              <span class="phone" onclick="copyPhone(event)">+91 73569 83195</span>
-            </div>
-            <div class="role">Member</div>
-            <a href="https://www.linkedin.com/in/aditya-das-1a8042377" target="_blank" rel="noopener noreferrer" class="linkedin-btn">
-              <i class="fab fa-linkedin-in"></i>
-            </a>
-            <div class="notes" onclick="event.stopPropagation(); triggerConfetti(); this.onclick=null;">
-              New Member
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Vedika Bansal - Ex -->
-      <div class="member-card ex" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)">
-        <div class="card-inner">
-          <div class="shine"></div>
-          <div class="avatar">VB</div>
-          <div class="info">
-            <div class="name-line">
-              <div class="name">Vedika Bansal</div>
-              <span class="phone" onclick="copyPhone(event)">+91 93022 09223</span>
-            </div>
-            <div class="role">Ex-Member</div>
-          </div>
-        </div>
-      </div>
+    <canvas class="bg-canvas" id="bgCanvas"></canvas>
+    <div class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" role="button" tabindex="0">
+        <i class="fas fa-moon"></i>
     </div>
+    <div class="container">
+        <h1>Team Code-X</h1>
+        <div class="quote"><span id="typewriter" aria-live="polite"></span></div>
+        <div class="team-grid">
+            <!-- Tanishq Khevariya - Team Leader -->
+            <div class="member-card leader" data-member="Tanishq Khevariya" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)" role="article" aria-labelledby="name-tk">
+                <div class="card-inner">
+                    <div class="shine"></div>
+                    <div class="avatar" aria-hidden="true">TK</div>
+                    <div class="info">
+                        <div class="name-line">
+                            <div class="name" id="name-tk">Tanishq Khevariya</div>
+                        </div>
+                        <div class="role">Team Leader</div>
+                        <a href="https://www.linkedin.com/in/tanishq-khevariya-a11017372" target="_blank" rel="noopener noreferrer" class="linkedin-btn" aria-label="Tanishq's LinkedIn profile">
+                            <i class="fab fa-linkedin-in" aria-hidden="true"></i>
+                        </a>
+                        <button class="contact-btn" onclick="openPasswordModal(event, 'Tanishq Khevariya', 'tanishq@example.com', '+91 82994 36456')" aria-label="Get Tanishq's contact details">
+                            <i class="fas fa-lock" aria-hidden="true"></i> Get Contact
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Dhananjay Bhadoria -->
+            <div class="member-card" data-member="Dhananjay Bhadoria" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)" role="article" aria-labelledby="name-db">
+                <div class="card-inner">
+                    <div class="shine"></div>
+                    <div class="avatar" aria-hidden="true">DB</div>
+                    <div class="info">
+                        <div class="name-line">
+                            <div class="name" id="name-db">Dhananjay Bhadoria</div>
+                        </div>
+                        <div class="role">Member</div>
+                        <button class="contact-btn" onclick="openPasswordModal(event, 'Dhananjay Bhadoria', 'dhananjaybhadoriya070@gmail.com', '+91 90989 03123')" aria-label="Get Dhananjay's contact details">
+                            <i class="fas fa-lock" aria-hidden="true"></i> Get Contact
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Nivedit Pathak -->
+            <div class="member-card" data-member="Nivedit Pathak" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)" role="article" aria-labelledby="name-np">
+                <div class="card-inner">
+                    <div class="shine"></div>
+                    <div class="avatar" aria-hidden="true">NP</div>
+                    <div class="info">
+                        <div class="name-line">
+                            <div class="name" id="name-np">Nivedit Pathak</div>
+                        </div>
+                        <div class="role">Member</div>
+                        <button class="contact-btn" onclick="openPasswordModal(event, 'Nivedit Pathak', 'nivedit@example.com', '+91 85272 61363')" aria-label="Get Nivedit's contact details">
+                            <i class="fas fa-lock" aria-hidden="true"></i> Get Contact
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Aditya Das -->
+            <div class="member-card" data-member="Aditya Das" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)" role="article" aria-labelledby="name-ad">
+                <div class="card-inner">
+                    <div class="shine"></div>
+                    <div class="avatar" aria-hidden="true">AD</div>
+                    <div class="info">
+                        <div class="name-line">
+                            <div class="name" id="name-ad">Aditya Das</div>
+                        </div>
+                        <div class="role">Member</div>
+                        <a href="https://www.linkedin.com/in/aditya-das-1a8042377" target="_blank" rel="noopener noreferrer" class="linkedin-btn" aria-label="Aditya's LinkedIn profile">
+                            <i class="fab fa-linkedin-in" aria-hidden="true"></i>
+                        </a>
+                        <button class="contact-btn" onclick="openPasswordModal(event, 'Aditya Das', 'aditya@example.com', '+91 73569 83195')" aria-label="Get Aditya's contact details">
+                            <i class="fas fa-lock" aria-hidden="true"></i> Get Contact
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Vedika Bansal - Ex -->
+            <div class="member-card ex" data-member="Vedika Bansal" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)" role="article" aria-labelledby="name-vb">
+                <div class="card-inner">
+                    <div class="shine"></div>
+                    <div class="avatar" aria-hidden="true">VB</div>
+                    <div class="info">
+                        <div class="name-line">
+                            <div class="name" id="name-vb">Vedika Bansal</div>
+                        </div>
+                        <div class="role">Ex-Member</div>
+                        <button class="contact-btn" onclick="openPasswordModal(event, 'Vedika Bansal', 'vedika@example.com', '+91 93022 09223')" aria-label="Get Vedika's contact details" disabled title="Ex-member - Contact archived">
+                            <i class="fas fa-lock" aria-hidden="true"></i> Get Contact
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Kanika Pandey - Ex -->
+            <div class="member-card ex" data-member="Kanika Pandey" onmousemove="tiltCard(event, this)" onmouseleave="resetCard(this)" role="article" aria-labelledby="name-kp">
+                <div class="card-inner">
+                    <div class="shine"></div>
+                    <div class="avatar" aria-hidden="true">KP</div>
+                    <div class="info">
+                        <div class="name-line">
+                            <div class="name" id="name-kp">Kanika Pandey</div>
+                        </div>
+                        <div class="role">Ex-Member</div>
+                        <a href="https://www.linkedin.com/in/kanika-pandey-5a6163381" target="_blank" rel="noopener noreferrer" class="linkedin-btn" aria-label="Kanika's LinkedIn profile">
+                            <i class="fab fa-linkedin-in" aria-hidden="true"></i>
+                        </a>
+                        <button class="contact-btn" onclick="openPasswordModal(event, 'Kanika Pandey', 'kanika@example.com', '+91 78289 85175')" aria-label="Get Kanika's contact details" disabled title="Ex-member - Contact archived">
+                            <i class="fas fa-lock" aria-hidden="true"></i> Get Contact
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            © 2025 Team Code-X | Designed with <i class="fas fa-heart" aria-hidden="true"></i> by Tanishq | Updated Dec 2025
+        </footer>
+    </div>
+    <!-- Password Modal -->
+    <div id="passwordModal" class="modal" role="dialog" aria-labelledby="passwordModalTitle" aria-hidden="true">
+        <div class="modal-content">
+            <span class="close" onclick="closePasswordModal()" aria-label="Close modal">&times;</span>
+            <h3 id="passwordModalTitle">Verify Access</h3>
+            <p style="text-align: center; margin-bottom: 15px; font-size: 0.9rem; color: var(--muted);">Enter password to view <br><strong id="passwordMemberName"></strong>'s contact info.</p>
+            <form id="passwordForm" onsubmit="event.preventDefault(); handleVerify();">
+                <input type="password" id="userPassword" placeholder="Enter team password" required autofocus aria-describedby="password-desc">
+                <button type="button" class="submit-btn" onclick="handleVerify()">Verify Now</button>
+            </form>
+            <div class="approval-note" id="password-desc">
+                <strong>Security Check:</strong> Access restricted to authorized members only.
+            </div>
+        </div>
+    </div>
+    <!-- Contact Details Modal -->
+    <div id="detailsModal" class="modal" role="dialog" aria-labelledby="detailsModalTitle" aria-hidden="true">
+        <div class="modal-content">
+            <span class="close" onclick="closeDetailsModal()" aria-label="Close modal">&times;</span>
+            <h3 id="detailsModalTitle">Contact Details</h3>
+            <div class="contact-details">
+                <h4><span id="detailsMemberName"></span></h4>
+                <div class="contact-item">
+                    <span>Email Address</span>
+                    <span id="memberEmail"></span>
+                </div>
+                <div class="contact-item">
+                    <span>Phone Number</span>
+                    <span id="memberPhone"></span>
+                </div>
+            </div>
+            <button class="submit-btn" onclick="copyDetails()" aria-label="Copy contact details to clipboard">
+                <i class="fas fa-copy" aria-hidden="true"></i> Copy to Clipboard
+            </button>
+        </div>
+    </div>
+    <script>
+        // Hardcoded password - Consider hashing in production
+        const TEAM_PASSWORD = 'ILVdomination';
+        let currentContactMember = '';
+        let currentMemberEmail = '';
+        let currentPhone = '';
 
-    <footer>
-      © 2025 Team Code-X | Designed with <i class="fas fa-heart"></i> by Tanishq
-    </footer>
-  </div>
+        // Typewriter effect
+        const txt = "Dominate. Innovate. Repeat.";
+        const el = document.getElementById("typewriter");
+        let i = 0;
+        function startTypewriter() {
+            if (i < txt.length) {
+                el.innerHTML += txt[i++];
+                setTimeout(startTypewriter, 120);
+            }
+        }
+        setTimeout(startTypewriter, 1000);
 
-  <script>
-    const txt = "Dominate. Innovate. Repeat.";
-    const el = document.getElementById("typewriter");
-    let i = 0;
-    setTimeout(() => {
-      function type() {
-        if (i < txt.length) { el.innerHTML += txt[i++]; setTimeout(type, 120); }
-      }
-      type();
-    }, 1000);
+        // Modal Control Functions
+        function openPasswordModal(e, memberName, memberEmail, phone) {
+            if(e) e.stopPropagation();
+            currentContactMember = memberName;
+            currentMemberEmail = memberEmail;
+            currentPhone = phone;
+            document.getElementById('passwordMemberName').textContent = memberName;
+            document.getElementById('passwordModal').style.display = 'block';
+            document.getElementById('passwordModal').setAttribute('aria-hidden', 'false');
+            document.getElementById('detailsModal').setAttribute('aria-hidden', 'true');
+            document.getElementById('passwordForm').reset();
+            // Auto-focus input
+            setTimeout(() => {
+                document.getElementById('userPassword').focus();
+            }, 100);
+        }
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('passwordModal').setAttribute('aria-hidden', 'true');
+        }
+        function openDetailsModal() {
+            document.getElementById('detailsMemberName').textContent = currentContactMember;
+            document.getElementById('memberEmail').textContent = currentMemberEmail;
+            document.getElementById('memberPhone').textContent = currentPhone;
+            document.getElementById('detailsModal').style.display = 'block';
+            document.getElementById('detailsModal').setAttribute('aria-hidden', 'false');
+            document.getElementById('passwordModal').setAttribute('aria-hidden', 'true');
+        }
+        function closeDetailsModal() {
+            document.getElementById('detailsModal').style.display = 'none';
+            document.getElementById('detailsModal').setAttribute('aria-hidden', 'true');
+        }
 
-    function copyPhone(e) {
-      e.stopPropagation();
-      const phone = e.target.textContent;
-      navigator.clipboard.writeText(phone).then(() => showToast("Copied!"));
-    }
+        // Password Verification Logic
+        const passwordForm = document.getElementById('passwordForm');
+        const passwordInput = document.getElementById('userPassword');
+        function handleVerify() {
+            const enteredPassword = passwordInput.value.trim();
+            if (enteredPassword === TEAM_PASSWORD) {
+                showToast('Access granted! Opening details...');
+                closePasswordModal();
+                setTimeout(openDetailsModal, 400);
+            } else {
+                showToast('Incorrect password! Try again.');
+                passwordInput.style.borderColor = '#ff0055';
+                // Shake effect on form
+                passwordForm.style.animation = 'none';
+                passwordForm.offsetHeight;
+                passwordForm.style.animation = 'shake 0.4s ease-in-out';
+                setTimeout(() => {
+                    passwordInput.style.borderColor = '';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }, 600);
+            }
+        }
+        function copyDetails() {
+            const details = `Contact for ${currentContactMember}:\nEmail: ${currentMemberEmail}\nPhone: ${currentPhone}`;
+            navigator.clipboard.writeText(details).then(() => {
+                showToast('Copied to clipboard!');
+            }).catch(err => {
+                showToast('Failed to copy. Please manually select.');
+            });
+        }
 
-    function showToast(msg) {
-      let t = document.querySelector('.toast');
-      if (!t) { t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); }
-      t.textContent = msg; t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2000);
-    }
+        // Global click listener for modals
+        window.onclick = function(event) {
+            const pm = document.getElementById('passwordModal');
+            const dm = document.getElementById('detailsModal');
+            if (event.target === pm) closePasswordModal();
+            if (event.target === dm) closeDetailsModal();
+        }
+        function showToast(msg) {
+            let t = document.querySelector('.toast');
+            if (!t) {
+                t = document.createElement('div');
+                t.className = 'toast';
+                document.body.appendChild(t);
+            }
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
 
-    function tiltCard(e, card) {
-      const inner = card.querySelector('.card-inner');
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left, y = e.clientY - rect.top;
-      const cx = rect.width / 2, cy = rect.height / 2;
-      const rx = (cy - y) / 15, ry = (x - cx) / 15;
-      inner.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateZ(20px)`;
-    }
-    function resetCard(card) {
-      card.querySelector('.card-inner').style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
-    }
+        // Card tilt effect
+        function tiltCard(e, card) {
+            const inner = card.querySelector('.card-inner');
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const cx = rect.width / 2;
+            const cy = rect.height / 2;
+            const rx = (cy - y) / 15;
+            const ry = (x - cx) / 15;
+            inner.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateZ(20px)`;
+        }
+        function resetCard(card) {
+            card.querySelector('.card-inner').style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
+        }
 
-    const canvas = document.getElementById('bgCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = innerWidth; canvas.height = innerHeight;
-    let particles = [];
-    class P { 
-      constructor() { 
-        this.x = Math.random()*innerWidth; this.y = Math.random()*innerHeight;
-        this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5;
-        this.size = Math.random()*2; 
-      } 
-      draw() { ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-        ctx.fillStyle='rgba(0,255,255,0.6)'; ctx.fill(); }
-      update() { this.x+=this.vx; this.y+=this.vy;
-        if(this.x<0||this.x>innerWidth) this.vx*=-1;
-        if(this.y<0||this.y>innerHeight) this.vy*=-1; this.draw(); }
-    }
-    for(let i=0;i<150;i++) particles.push(new P());
-    function animate(){ctx.clearRect(0,0,innerWidth,innerHeight);
-      particles.forEach(p=>p.update()); requestAnimationFrame(animate);}
-    animate();
+        // Canvas Background - Enhanced with mouse attraction
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: 0, y: 0 };
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+        resizeCanvas();
 
-    function toggleTheme() {
-      document.body.classList.toggle('light');
-      const icon = document.querySelector('.theme-toggle i');
-      if(document.body.classList.contains('light')) {
-        document.body.style.background='#f7f7f7'; document.body.style.color='#000';
-        icon.classList.replace('fa-moon','fa-sun');
-      } else {
-        document.body.style.background='var(--dark)'; document.body.style.color='var(--text)';
-        icon.classList.replace('fa-sun','fa-moon');
-      }
-    }
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.size = Math.random() * 2;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = document.body.classList.contains('light') ? 'rgba(0,123,255,0.3)' : 'rgba(0,255,255,0.5)';
+                ctx.fill();
+            }
+            update() {
+                // Attract to mouse subtly
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 100) {
+                    this.vx += (dx / dist) * 0.1;
+                    this.vy += (dy / dist) * 0.1;
+                }
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                this.draw();
+            }
+        }
+        // Reduced particles for better mobile performance
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => p.update());
+            requestAnimationFrame(animate);
+        }
+        animate();
 
-    function triggerConfetti() {
-      const conf = document.createElement('div');
-      conf.classList.add('confetti');
-      conf.style.position = 'fixed'; conf.style.top = '0'; conf.style.left = '50%';
-      conf.style.transform = 'translateX(-50%)'; conf.style.zIndex = '9999';
-      for(let i=0;i<80;i++){
-        const c=document.createElement('span');
-        c.style.position='absolute'; c.style.left=`${Math.random()*100}vw`;
-        c.style.width='8px'; c.style.height='8px';
-        c.style.background=`hsl(${Math.random()*360},100%,60%)`;
-        c.style.borderRadius='50%'; c.style.animation=`fall ${Math.random()*2+3}s linear forwards`;
-        conf.appendChild(c);
-      }
-      document.body.appendChild(conf);
-      setTimeout(()=>conf.remove(),4000);
-    }
-  </script>
+        // Theme toggle with keyboard support
+        function toggleTheme() {
+            document.body.classList.toggle('light');
+            const icon = document.querySelector('.theme-toggle i');
+            if (document.body.classList.contains('light')) {
+                icon.className = 'fas fa-sun';
+                document.querySelector('.theme-toggle').setAttribute('aria-label', 'Switch to dark mode');
+            } else {
+                icon.className = 'fas fa-moon';
+                document.querySelector('.theme-toggle').setAttribute('aria-label', 'Switch to light mode');
+            }
+        }
+        // Keyboard support for theme toggle
+        document.querySelector('.theme-toggle').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleTheme();
+            }
+        });
+
+        // Confetti - Removed from Aditya Das
+    </script>
 </body>
 </html>
